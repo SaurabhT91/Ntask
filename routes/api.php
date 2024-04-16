@@ -29,4 +29,5 @@ Route::middleware([CheckTokenMiddleware::class])->group(function () {
     Route::post('/assign-task', [AssignTaskController::class, 'assign']);
     Route::delete('/unassign-task/{userId}/{taskId}', [AssignTaskController::class, 'unassignTask']);
     Route::get('/user/{userId}/tasks', [AssignTaskController::class, 'getUserWithTasks']);
+    Route::get('/tasks/assigned-to-current-user', [AssignTaskController::class, 'tasksAssignedToCurrentUser']);
 });

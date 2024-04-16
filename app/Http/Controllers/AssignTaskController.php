@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\UserToken;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class AssignTaskController extends Controller
@@ -24,13 +25,11 @@ class AssignTaskController extends Controller
 
             $tasks = $user->assignedTasks()->get();
 
-           
             return response()->json([
                 'user' => $user,
                 'tasks' => $tasks
             ]);
         } catch (\Exception $e) {
-           
             return response()->json(['error' => 'Failed to fetch user and tasks.'], 500);
         }
     }
@@ -58,23 +57,18 @@ class AssignTaskController extends Controller
     public function assign(Request $request)
     {
         try {
-            // Validate the incoming request data
             $validatedData = $request->validate([
                 'task_id' => 'required|exists:tasks,id',
                 'users' => 'required|array',
                 'users.*' => 'exists:users,id',
             ]);
 
-            // Find the task by ID
             $task = Task::findOrFail($validatedData['task_id']);
 
-            // Attach users to the task
             $task->assignedUsers()->sync($validatedData['users']);
 
-            // Return success response
             return response()->json(['message' => 'Task assigned successfully']);
         } catch (\Exception $e) {
-            // Handle any errors and return error response
             return response()->json(['error' => 'Failed to assign task. Please try again.'], 500);
         }
     }
@@ -82,17 +76,40 @@ class AssignTaskController extends Controller
     public function unassignTask($userId, $taskId)
     {
         try {
-            // Find the user by ID
             $user = User::findOrFail($userId);
 
-            // Detach the task from the user
             $user->assignedTasks()->detach($taskId);
 
-            // Return success response
             return response()->json(['message' => 'Task unassigned successfully']);
         } catch (\Exception $e) {
-            // Handle any errors and return error response
             return response()->json(['error' => 'Failed to unassign task. Please try again.'], 500);
+        }
+    }
+
+    public function tasksAssignedToCurrentUser(Request $request)
+    {
+        try {
+            $token = $request->bearerToken();
+
+            if (!$token) {
+                return response()->json(['error' => 'Bearer token not provided in the request header.'], 401);
+            }
+
+            $userToken = UserToken::where('token', $token)->first();
+
+            if (!$userToken) {
+                return response()->json(['error' => 'Invalid token.'], 401);
+            }
+
+            $userId = $userToken->user_id;
+
+            $tasks = Task::whereHas('assignedUsers', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })->get();
+
+            return response()->json(['tasks' => $tasks]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch tasks.'], 500);
         }
     }
 }
