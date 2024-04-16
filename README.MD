@@ -16,7 +16,7 @@ bash
 
 git clone https://github.com/SaurabhT91/Ntask.git
 
-    Install dependencies using Composer:
+    Install dependencies using Composer: composer install
 
 bash
 
