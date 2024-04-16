@@ -4,7 +4,7 @@ This project is a Task Management API developed using PHP (Laravel) and MySQL. T
 Getting Started
 Prerequisites
 
-    PHP >= 7.3
+    PHP >= 8.2
     Composer
     MySQL
 
