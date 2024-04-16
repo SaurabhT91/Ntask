@@ -4,19 +4,19 @@ This project is a Task Management API developed using PHP (Laravel) and MySQL. T
 Getting Started
 Prerequisites
 
-    PHP >= 8.2
+    PHP >= 7.3
     Composer
     MySQL
 
 Installation
 
-    Clone the repository : https://github.com/SaurabhT91/Ntask.git
+    Clone the repository:
 
 bash
 
 git clone https://github.com/SaurabhT91/Ntask.git
 
-    Install dependencies using Composer: composer install
+    Install dependencies using Composer:
 
 bash
 
@@ -78,5 +78,3 @@ Contributors
     Saurabh Tidgam
 
 Feel free to contribute by submitting bug reports, feature requests, or pull requests.
-
-Make sure to replace <postman-collection-link>, <your-database-username>, and <your-database-password> with appropriate values.
