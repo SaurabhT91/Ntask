@@ -6,7 +6,7 @@ Getting Started
 
 Prerequisites
 
-PHP >= 7.3
+PHP >= 8.2
 Composer
 MySQL
 
