@@ -10,7 +10,7 @@ Prerequisites
 
 Installation
 
-    Clone the repository:
+    Clone the repository : https://github.com/SaurabhT91/Ntask.git
 
 bash
 
