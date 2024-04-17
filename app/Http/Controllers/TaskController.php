@@ -132,18 +132,27 @@ class TaskController extends Controller
         try {
             $query = Task::query();
 
-            if ($request->has('status') && $request->status !== '') {
+            if ($request->has('status') && in_array($request->status, ['pending', 'completed'])) {
                 $query->where('status', $request->status);
+            } elseif ($request->has('status') && !in_array($request->status, ['pending', 'completed'])) {
+                return response()->json(['error' => 'Invalid status value.'], 400);
             }
 
             if ($request->has('filter_date')) {
-                $query->whereDate('due_date', $request->filter_date);
+                $filterDate = $request->filter_date;
+                if (!strtotime($filterDate)) {
+                    return response()->json(['error' => 'Invalid filter_date format.'], 400);
+                }
+                $query->whereDate('due_date', $filterDate);
             }
 
-            if ($request->has('assigned_user') && $request->assigned_user !== '') {
-                $query->whereHas('assignedUsers', function ($query) use ($request) {
-                    $query->where('user_id', $request->assigned_user);
+            if ($request->has('assigned_user') && is_numeric($request->assigned_user)) {
+                $assignedUserId = $request->assigned_user;
+                $query->whereHas('assignedUsers', function ($query) use ($assignedUserId) {
+                    $query->where('user_id', $assignedUserId);
                 });
+            } elseif ($request->has('assigned_user') && !is_numeric($request->assigned_user)) {
+                return response()->json(['error' => 'Invalid assigned_user value.'], 400);
             }
 
             $tasks = $query->get();
@@ -153,6 +162,7 @@ class TaskController extends Controller
             return response()->json(['error' => 'Failed to fetch tasks.'], 500);
         }
     }
+
 
 
 
